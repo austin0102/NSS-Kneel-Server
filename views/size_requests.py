@@ -7,7 +7,7 @@ SIZES = [
     {
       "id": 2,
       "carets": 0.75,
-      "price": 782
+      "price": 783
     },
     {
       "id": 3,

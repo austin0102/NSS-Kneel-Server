@@ -1,6 +1,6 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from views import get_all_metals, get_all_styles, get_all_orders, get_all_sizes, get_single_metal, get_single_size, get_single_order, get_single_style, create_order, delete_order, update_order
+from views import get_all_metals, get_all_styles, get_all_orders, get_all_sizes, get_single_metal, get_single_size, get_single_order, get_single_style, create_order, delete_order, update_order, update_metal
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -100,7 +100,7 @@ class HandleRequests(BaseHTTPRequestHandler):
 
     def do_PUT(self):
         """Handles PUT requests to the server """
-        self._set_headers(204)
+        
         content_len = int(self.headers.get('content-length', 0))
         post_body = self.rfile.read(content_len)
         post_body = json.loads(post_body)
@@ -108,11 +108,48 @@ class HandleRequests(BaseHTTPRequestHandler):
         # Parse the URL
         (resource, id) = self.parse_url(self.path)
 
+        success = False
+
         # Delete a single order from the list
         if resource == "orders":
-            update_order(id, post_body)
+            success = update_order(id, post_body)
+
+        elif resource == "metals":
+            success = update_metal(id, post_body)
+
+
+        if success:
+            self._set_headers(204)
+        else:
+            self._set_headers(404)
         
         self.wfile.write("".encode())
+
+    # def do_PUT(self):
+    #     """Handles PUT requests to the server"""
+    #     content_len = int(self.headers.get('content-length', 0))
+    #     post_body = self.rfile.read(content_len)
+    #     post_body = json.loads(post_body)
+
+    #     # Parse the URL
+    #     (resource, id) = self.parse_url(self.path)
+
+    #     success = False
+
+    #     # Update a single order from the list
+    #     if resource == "orders":
+    #         success = update_order(id, post_body)
+
+    #     elif resource == "metals":
+    #         success = update_metal(id, post_body)
+
+    #     if success:
+    #         self.send_response(204)
+    #     else:
+    #         self.send_response(404)
+
+    #     self.end_headers()
+
 
     def _set_headers(self, status):
         """Sets the status code, Content-Type and Access-Control-Allow-Origin
